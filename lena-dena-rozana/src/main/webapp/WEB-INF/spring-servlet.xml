@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans  
+						http://www.springframework.org/schema/beans/spring-beans-3.0.xsd  
+						http://www.springframework.org/schema/context  
+						http://www.springframework.org/schema/context/spring-context-3.0.xsd
+						http://www.springframework.org/schema/aop 
+						http://www.springframework.org/schema/aop/spring-aop-2.5.xsd
+						http://www.springframework.org/schema/mvc 
+						http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd">
+
+	<context:component-scan base-package="com.cs.myapps.lenaDenaRozana.controllers"></context:component-scan>
+	<mvc:annotation-driven />
+	<bean
+		class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<property name="prefix" value="/WEB-INF/jsp/"></property>
+		<property name="suffix" value=".jsp"></property>
+		
+	</bean>
+	
+	<!-- Normal Spring-exposed bean. required for AOP -->
+   <!-- <bean id="applicationProperties"
+         class="com.cs.myapps.lenaDenaRozana.beans.ApplicationProperties">
+  
+   </bean> -->
+   <aop:aspectj-autoproxy/>
+	
+	<!-- The Aspect itself. -->
+   <!-- <bean id="lenaDenaLoggingAspect"
+         class="com.cs.myapps.lenaDenaRozana.logging.LoggingAspect" />	
+	
+	<aop:config>
+
+      The Pointcut(s).
+      <aop:pointcut id="loggingPointcut"
+                    expression="within(com.cs.myapps.lenaDenaRozana.beans.ApplicationProperties)" />
+      The Advice(s).
+      <aop:aspect id="loggingAspect" ref="lenaDenaLoggingAspect">
+         <aop:before pointcut-ref="loggingPointcut" method="logEntry" />
+         <aop:after pointcut-ref="loggingPointcut" method="logExit" />
+         <aop:after-returning pointcut-ref="loggingPointcut"
+                              method="logExitAfterReturn" />
+      </aop:aspect>
+
+   </aop:config> -->
+   
+	<bean id="localeResolver"
+		class="org.springframework.web.servlet.i18n.SessionLocaleResolver">
+		<property name="defaultLocale" value="en" />
+	</bean>
+
+	<bean id="localeChangeInterceptor"
+		class="org.springframework.web.servlet.i18n.LocaleChangeInterceptor">
+		<property name="paramName" value="language" />
+	</bean>
+	
+	<bean class="org.springframework.web.servlet.mvc.support.ControllerClassNameHandlerMapping" >
+		<property name="interceptors">
+			<list>
+				<ref bean="localeChangeInterceptor" />
+			</list>
+		</property>
+	</bean>
+	
+	<!-- Register the bean -->
+	<!--  <bean class="com.cs.myapps.lenaDenaRozana.controllers.OwnerController" /> -->
+
+	<!-- Register the lenaDenaRozana.properties -->
+	<bean id="messageSource"
+		class="org.springframework.context.support.ResourceBundleMessageSource">
+		<property name="basename" value="nls/lenaDenaRozana" />
+	</bean>
+	
+	<!-- Register the interceptor for validating ownerId in session -->
+	<mvc:interceptors>
+		<bean class="com.cs.myapps.lenaDenaRozana.interceptors.MainInterceptor" />		
+	</mvc:interceptors>
+		
+	<mvc:default-servlet-handler/>
+	
+</beans>
